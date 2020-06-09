@@ -1,0 +1,1 @@
+from .task6 import task6
