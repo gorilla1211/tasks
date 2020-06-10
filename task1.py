@@ -36,6 +36,7 @@ def task1():
     WxCotroApi = WxWebotsApi.WxWebotsControllers()
     WxJointApi = WxWebotsApi.WxWebotsJoints()
     ll_controller = WxCotroApi.publish_leftLimb_controller
+
     # 订阅信息
     ll = WxWebotsApi.WxWebotsJoints()
     ll.sub_leftLimb_joint_states()
@@ -88,6 +89,21 @@ def task1():
     is_status_4 = False
     is_status_5 = False
     status = 1
+
+        # 合并
+    l_commands = [l_command_1, l_command_2, l_command_3, l_command_4, l_command_5]
+
+    # 定义标签
+    is_l_over = False
+    # 获取拟合数据
+    l_commands = WxWebotsApi.line_fit(l_commands, timeline=1000000)
+    while not rospy.is_shutdown():
+        if not is_l_over :
+            # 发布到topic
+            for l_cmd in l_commands:
+                ll_controller(l_names, l_cmd)
+            is_l_over = True
+
     # 2.3 发布到相应的topic
     while not rospy.is_shutdown():
         # l_command[2] = 1.85  # LShoulderPitch
