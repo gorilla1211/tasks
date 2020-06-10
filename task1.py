@@ -16,6 +16,17 @@ from utils.walker_tops_srvs import BuildConnect, WalkerWebotsSub
 from utils import WxWebotsApi
 from utils.walker_types import JointCommand
 import math
+import numpy as np
+
+
+def is_check_position_same(cur_position, check_position):
+    cur_p = np.array(list(cur_position))
+    check_p = np.array(list(check_position))
+    res = abs(check_p - cur_p)
+    if sum(res<=0.03) >= 7:
+        return True
+    else:
+        return False
 
 
 def task1():
@@ -25,24 +36,100 @@ def task1():
     WxCotroApi = WxWebotsApi.WxWebotsControllers()
     WxJointApi = WxWebotsApi.WxWebotsJoints()
     ll_controller = WxCotroApi.publish_leftLimb_controller
-    ll_sub_states = WxJointApi.sub_leftLimb_joint_states
+    # 订阅信息
+    ll = WxWebotsApi.WxWebotsJoints()
+    ll.sub_leftLimb_joint_states()
+    """
+    LShoulderPitch -0.785 3.14     96.2
+    LShoulderRoll  -1.57  0.0175   96.2
+    LShoulderYaw   -1.92  1.92     96.2
+    LElbowRoll     -2.27  1.00E-06 96.2
+    LElbowYaw      -2.36  2.36     27.3
+    LWristRoll     -0.351 0.351    27.3
+    LWristPitch    -0.351 0.351    27.3
+
+    RShoulderPitch -1.00E-06 1.5708   96.2
+    RShoulderRoll  -3.14     0.785    96.2
+    RShoulderYaw   -1.57     0.0175   96.2
+    RElbowRoll     -1.92     1.92     96.2
+    RElbowYaw      -2.27     1.00E-06 27.3
+    9RWristRoll    -2.36     2.36     27.3
+    RWristPitch    -0.351    0.351    27.3
+
+    LShoulderYaw : RShoulderYaw 反
+    LElbowYaw : RElbowYaw 反
+
+
+    # LFinger -1.00E-06 1.5708 0.5
+    # lh_command = [-0.0005440629177677493, -0.0014368724491023198, 
+    # 0.0011593607539626544, 0.0034412821446439526, 
+    # 0.001125063615987366, 0.003441281729176153, 
+    # 0.002425551821042031, 0.005156504778905103, 
+    # 0.001874385406552332, 0.0054440861704677206]
+
+    """
+
     # 2.2 定义参数,参数格式可查看函数获取
     # time
-    time = 0.01
+    # time = 0.01
     # 左臂参数
     l_names = ['' for _ in range(7)]
     l_command = [0 for _ in range(7)]
-    l_mode = 6
 
-    ll_sub_states()
+
+    l_command_1 = [0,0,-0.6,0,0.8,0,-0.2]
+    l_command_2 = [0,0,-1.3,0,1.6,0,-0.35]
+    l_command_3 = [0,0,-1.8,-0.4,2.3,0,-0.35]
+    l_command_4 = [0.4,-0.1,-1.8,-0.8,2.3,0,-0.35]
+    l_command_5 = [0.9,-0.2,-1.8,-1.2,2.3,0,-0.35]
+    is_status_1 = False
+    is_status_2 = False
+    is_status_3 = False
+    is_status_4 = False
+    is_status_5 = False
+    status = 1
     # 2.3 发布到相应的topic
     while not rospy.is_shutdown():
-        l_command[2] = 1.85  # LShoulderPitch
-        l_command[1] = -0.7     # 肩 打开/关闭臂
-        l_command[3] = 1.12     # 肘 打开/关闭肘
-        l_command[0] = 1.1      # 肩 举起/放下臂
-        l_command[4] = -0.5     # 肘 旋转肘
-        ll_controller(l_names, l_command)  # 传入参数控制左臂
+        # l_command[2] = 1.85  # LShoulderPitch
+        # l_command[1] = -0.7     # 肩 打开/关闭臂
+        # l_command[3] = 1.12     # 肘 打开/关闭肘
+        # l_command[0] = 1.1      # 肩 举起/放下臂
+        # l_command[4] = -0.5     # 肘 旋转肘
+
+        leftLimb_joint_states = ll.leftLimb_joint_states
+        if leftLimb_joint_states:
+            position = list(leftLimb_joint_states.position)
+            if is_check_position_same(position, l_command_1) and not is_status_1:
+                status = 2
+                is_status_1 = True
+            elif is_check_position_same(position, l_command_2) and not is_status_2:
+                status = 3
+                is_status_2 = True
+            elif is_check_position_same(position, l_command_3) and not is_status_3:
+                status = 4
+                is_status_3 = True
+            elif is_check_position_same(position, l_command_4) and not is_status_3:
+                status = 5
+                is_status_4 = True
+        
+        if status == 1:
+            ll_controller(l_names, l_command_1)
+        elif status == 2:
+            ll_controller(l_names, l_command_2)
+        elif status == 3:
+            ll_controller(l_names, l_command_3)
+        elif status == 4:
+            ll_controller(l_names, l_command_4)
+        elif status == 5:
+            ll_controller(l_names, l_command_5)
+
+
+        # l_command[2] = -0.785
+        # l_command[4] = 2
+        # l_command[1] = -1.45
+        # l_command[3] = -1.65
+        # l_command[0] = 1.25
+        # ll_controller(l_names, l_command)  # 传入参数控制左臂
         
         # LeftLimb_joint_states = WxJointApi.leftLimb_joint_states  #订阅左臂信息
         # if LeftLimb_joint_states:
