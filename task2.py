@@ -59,10 +59,9 @@ ll_names = ['LShoulderPitch', 'LShoulderRoll', 'LShoulderYaw',
     LFifthFinger1
     LFifthFinger2
 """
-# lh_names = ['LFirstFinger1', 'LFirstFinger2', 'LSecondFinger1', 'LSecondFinger2'
-#             'LThirdFinger1', 'LThirdFinger2', 'LForthFinger1', 'LForthFinger2',
-#             'LFifthFinger1', 'LFifthFinger2']
-lh_names = ['' for _ in range(10)]
+lh_names = ['LFirstFinger1', 'LFirstFinger2', 'LSecondFinger1', 'LSecondFinger2'
+            'LThirdFinger1', 'LThirdFinger2', 'LForthFinger1', 'LForthFinger2',
+            'LFifthFinger1', 'LFifthFinger2']
 
 lh_command = [0, 0,
               0, 0,
@@ -85,12 +84,7 @@ def capture_cup_1():
 
     lh_command0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     lh_command1 = [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
-
-    lh_command2 = [0.5, 0.1,
-                   0.5, 0.2,
-                   0.5, 0.2,
-                   0.5, 0.2,
-                   0.5, 0.2]
+    lh_command2 = [0.5, 0.1, 0.5, 0.2, 0.5, 0.2, 0.5, 0.2, 0.5, 0.2]
 
     ll_is_over = False
     lh_is_over = False
@@ -111,10 +105,54 @@ def capture_cup_1():
             break
 
 
+def capture_cup_2():
+    ll_command_1 = [0, 0, 0, 0, 0, 0, 0]
+    ll_command_2 = [0, -1.0, 0, 0, 0, 0, 0]
+    ll_command_3 = [0, -1.0, -1.5, 0, 0, 0, 0]
+    ll_command_4 = [0, -1.0, -1.5, -1.5, 0, 0, 0]
+    ll_command_5 = [0.5, -1.0, -1.5, -1.5, 0, 0, 0]
+    ll_command_6 = [0.5, -0.5, -1.5, -1.5, 0, 0, 0]
+    ll_command_7 = [0.5, 0, -1.5, -1.5, 0, 0, 0]
+    ll_command_8 = [0.5, 0, -1.5, -1.5, 0.9, 0, 0]
+    ll_command_9 = [0.2, 0, -1.5, -1.5, 0.9, 0, 0]
+    ll_command_10 = [0.1, 0, -1.4, -1.5, 1.2, 0, 0]
+    ll_command_11 = [0.1, 0, -1.4, -1.5, 1.4, 0, 0]
+    ll_command_12 = [0.2, 0, -1.4, -1.4, 1.4, 0, 0.05]
+
+    ll_command_13 = [0.5, 0, -1.4, -1.4, 1.4, 0, 0.05]
+    ll_command_s = [ll_command_1, ll_command_2, ll_command_3, ll_command_4, ll_command_5, ll_command_6, ll_command_7,
+                    ll_command_8, ll_command_9, ll_command_10, ll_command_11, ll_command_12]
+    ll_commands = WxWebotsApi.line_fit(ll_command_s, timeline=1000000)
+
+    lh_command1 = [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
+    lh_command2 = [0.5, 0.1, 0.5, 0.2, 0.5, 0.2, 0.5, 0.2, 0.5, 0.2]
+
+    ll_is_over = False
+    lh_is_over = False
+    while not rospy.is_shutdown():
+        if not ll_is_over:
+            for cmd in ll_commands:
+                ll_controller(ll_names, cmd, mode=5)
+            ll_is_over = True
+        elif not lh_is_over:
+            for _ in range(500000):
+                lh_controller(lh_names, lh_command1, mode=5)
+            lh_is_over = True
+        else:
+            print('2号杯已握紧')
+            lh_controller(lh_names, lh_command2, mode=7)
+            for cmd in WxWebotsApi.line_fit([ll_command_13], timeline=500000):
+                ll_controller(ll_names, cmd, mode=5)
+            break
+
+
 def capture_cup(cup_num):
     if cup_num == 1:
-        print('Take the first cup')
+        print('拿1号杯')
         capture_cup_1()
+    elif cup_num == 2:
+        print('拿2号杯')
+        capture_cup_2()
     else:
         print(str(cup_num) + ': The cup can does not exist!')
 
