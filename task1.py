@@ -17,7 +17,7 @@ from utils import WxWebotsApi
 from utils.walker_types import JointCommand
 import math
 import numpy as np
-
+import time
 
 def is_check_position_same(cur_position, check_position):
     cur_p = np.array(list(cur_position))
@@ -32,6 +32,7 @@ def is_check_position_same(cur_position, check_position):
 def task1():
     # 1.切换到特定的场景
     scene_task1_SwitchLight()
+    time.sleep(5)
     # 2.1获取相应的控制器
     WxCotroApi = WxWebotsApi.WxWebotsControllers()
     WxJointApi = WxWebotsApi.WxWebotsJoints()
@@ -80,8 +81,8 @@ def task1():
 
     l_command_1 = [0,0,-0.6,0,0.8,0,-0.2]
     l_command_2 = [0,0,-1.3,0,1.6,0,-0.35]
-    l_command_3 = [0,0,-1.8,-0.4,2.3,0,-0.35]
-    l_command_4 = [0.4,-0.1,-1.8,-0.8,2.3,0,-0.35]
+    l_command_3 = [0,0,-1.8,-2.0,2.3,0,-0.35]
+    l_command_4 = [0.4,-0.1,-1.8,-2.0,2.3,0,-0.35]
     l_command_5 = [0.9,-0.2,-1.8,-1.2,2.3,0,-0.35]
     is_status_1 = False
     is_status_2 = False
@@ -105,39 +106,39 @@ def task1():
             is_l_over = True
 
     # 2.3 发布到相应的topic
-    while not rospy.is_shutdown():
-        # l_command[2] = 1.85  # LShoulderPitch
-        # l_command[1] = -0.7     # 肩 打开/关闭臂
-        # l_command[3] = 1.12     # 肘 打开/关闭肘
-        # l_command[0] = 1.1      # 肩 举起/放下臂
-        # l_command[4] = -0.5     # 肘 旋转肘
+    # while not rospy.is_shutdown():
+    #     # l_command[2] = 1.85  # LShoulderPitch
+    #     # l_command[1] = -0.7     # 肩 打开/关闭臂
+    #     # l_command[3] = 1.12     # 肘 打开/关闭肘
+    #     # l_command[0] = 1.1      # 肩 举起/放下臂
+    #     # l_command[4] = -0.5     # 肘 旋转肘
 
-        leftLimb_joint_states = ll.leftLimb_joint_states
-        if leftLimb_joint_states:
-            position = list(leftLimb_joint_states.position)
-            if is_check_position_same(position, l_command_1) and not is_status_1:
-                status = 2
-                is_status_1 = True
-            elif is_check_position_same(position, l_command_2) and not is_status_2:
-                status = 3
-                is_status_2 = True
-            elif is_check_position_same(position, l_command_3) and not is_status_3:
-                status = 4
-                is_status_3 = True
-            elif is_check_position_same(position, l_command_4) and not is_status_3:
-                status = 5
-                is_status_4 = True
+    #     leftLimb_joint_states = ll.leftLimb_joint_states
+    #     if leftLimb_joint_states:
+    #         position = list(leftLimb_joint_states.position)
+    #         if is_check_position_same(position, l_command_1) and not is_status_1:
+    #             status = 2
+    #             is_status_1 = True
+    #         elif is_check_position_same(position, l_command_2) and not is_status_2:
+    #             status = 3
+    #             is_status_2 = True
+    #         elif is_check_position_same(position, l_command_3) and not is_status_3:
+    #             status = 4
+    #             is_status_3 = True
+    #         elif is_check_position_same(position, l_command_4) and not is_status_3:
+    #             status = 5
+    #             is_status_4 = True
         
-        if status == 1:
-            ll_controller(l_names, l_command_1)
-        elif status == 2:
-            ll_controller(l_names, l_command_2)
-        elif status == 3:
-            ll_controller(l_names, l_command_3)
-        elif status == 4:
-            ll_controller(l_names, l_command_4)
-        elif status == 5:
-            ll_controller(l_names, l_command_5)
+    #     if status == 1:
+    #         ll_controller(l_names, l_command_1)
+    #     elif status == 2:
+    #         ll_controller(l_names, l_command_2)
+    #     elif status == 3:
+    #         ll_controller(l_names, l_command_3)
+    #     elif status == 4:
+    #         ll_controller(l_names, l_command_4)
+    #     elif status == 5:
+    #         ll_controller(l_names, l_command_5)
 
 
         # l_command[2] = -0.785
