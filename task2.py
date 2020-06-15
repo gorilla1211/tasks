@@ -59,9 +59,10 @@ ll_names = ['LShoulderPitch', 'LShoulderRoll', 'LShoulderYaw',
     LFifthFinger1
     LFifthFinger2
 """
-lh_names = ['LFirstFinger1', 'LFirstFinger2', 'LSecondFinger1', 'LSecondFinger2'
-            'LThirdFinger1', 'LThirdFinger2', 'LForthFinger1', 'LForthFinger2',
-            'LFifthFinger1', 'LFifthFinger2']
+# lh_names = ['LFirstFinger1', 'LFirstFinger2', 'LSecondFinger1', 'LSecondFinger2'
+#             'LThirdFinger1', 'LThirdFinger2', 'LForthFinger1', 'LForthFinger2',
+#             'LFifthFinger1', 'LFifthFinger2']
+lh_names = ['' for _ in range(10)]
 
 lh_command = [0, 0,
               0, 0,
@@ -82,28 +83,31 @@ def capture_cup_1():
     commands = [ll_command_1, ll_command_2, ll_command_3, ll_command_4, ll_command_5, ll_command_6]
     ll_commands = WxWebotsApi.line_fit(commands, timeline=1000000)
 
-    lh_command0 = [0, 1.0, 0, 0, 0, 0, 0, 0, 0, 0]
+    lh_command0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     lh_command1 = [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
 
-    lh_command2 = [0.2, 0.2, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0, 0]
-
-    lh_command_s = [lh_command0]
-    lh_commands = WxWebotsApi.line_fit(commands=lh_command_s, timeline=100000)
+    lh_command2 = [0.5, 0.2,
+                   0.5, 0.2,
+                   0.5, 0.2,
+                   0.5, 0.2,
+                   0.5, 0.2]
 
     ll_is_over = False
     lh_is_over = False
     while not rospy.is_shutdown():
         if not ll_is_over:
             for cmd in ll_commands:
-                ll_controller(ll_names, cmd)
+                ll_controller(ll_names, cmd, mode=5)
             ll_is_over = True
         elif not lh_is_over:
-            for cmd in lh_commands:
-                lh_controller(lh_names, cmd)
+            for _ in range(500000):
+                lh_controller(lh_names, lh_command1, mode=5)
             lh_is_over = True
         else:
-            # lh_controller(lh_names, lh_command2, mode=7)
-            # ll_controller(ll_names, ll_command_7, mode=7)
+            print('1号杯已握紧')
+            lh_controller(lh_names, lh_command2, mode=7)
+            for cmd in WxWebotsApi.line_fit([ll_command_7], timeline=500000):
+                ll_controller(ll_names, cmd, mode=5)
             break
 
 
