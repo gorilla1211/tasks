@@ -123,12 +123,12 @@ def task6():
                 is_status_5 = True
                 status = 6
                 ws.start()  # 向前走
-                linear_x = 0.1
+                linear_x = 0.5
                 linear_y = 0.005
                 angular_z = 0.005
                 ws.vel(linear_x, linear_y, angular_z)  # 设置前向速度
             elif status == 6:
-                if ws.cur_step_num - ws.last_step_num >= 15:
+                if ws.cur_step_num - ws.last_step_num >= 3:
                     ws.stop()
                     break
 
