@@ -2,7 +2,6 @@
     初始化关节
 """
 import rospy
-from utils.walker_tops_srvs import BuildConnect, WalkerWebotsSub
 from utils import WxWebotsApi
 from utils.walker_types import JointCommand, JointState
 

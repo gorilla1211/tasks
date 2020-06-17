@@ -158,7 +158,7 @@ def capture_cup_2():
     ll_command_13 = [0.5, 0, -1.4, -1.4, 1.4, 0, 0.05]
     ll_command_s = [ll_command_1, ll_command_2, ll_command_3, ll_command_4, ll_command_5, ll_command_6, ll_command_7,
                     ll_command_8, ll_command_9, ll_command_10, ll_command_11, ll_command_12]
-    ll_commands = WxWebotsApi.line_fit(ll_command_s, timeline=1000000)
+    ll_commands = WxWebotsApi.line_fit(ll_command_s, timeline=2000000)
 
     lh_command1 = [0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
     lh_command2 = [0.5, 0.1, 0.5, 0.2, 0.5, 0.2, 0.5, 0.2, 0.5, 0.2]
