@@ -43,26 +43,38 @@ def task10():
     rl_command3 = [-1.2, -0.4, 0.1, 0, 0, 0, 0]
     rl_command4 = [-1.57, 0.1, 0.1, 0, 0.2, 0, 0]
 
-    rh_command2 = [0, 0,
-                   0.5, 0.5,
-                   0.5, 0.5,
-                   0.5, 0.5,
-                   0.5, 0.5]
+    rh_command_force = [-0.0053659995616144665, -0.00045822824461439756,
+                        0.5, 0.5,
+                        0.5, 0.5,
+                        0.5, 0.5,
+                        0.5, 0.5]
     rl_command0 = [0, 10, 0, -10, 0, 0, 5]
-    rl_command0_0 = [-0.8891579791007349, -1.0053011435310661, 0.6744789912475938, -1.3838224546750395,
+    rl_command0_0 = [-0.8891579791007349, -1.0053011435310661, 0.6744789912475938, -1.4038224546750395,
                      -0.058873321286748104, -0.06892831649295111, 0.8230945483382753]
     rl_command0_1 = [-0.8891579791007349, -1.0053011435310661, 0.6744789912475938, -0.8838224546750395,
                      -0.058873321286748104, -0.06892831649295111, 0.8230945483382753]
-    rh_command0 = [0.0, 0.0,
-                   0.4, 0.4,
-                   0.4, 0.4,
-                   0.4, 0.4,
-                   0.4, 0.4]
+    rh_command0 = [0.5, 0.5,
+                   0.5, 0.4,
+                   0.5, 0.5,
+                   0.5, 0.5,
+                   0.5, 0.5]
+
+    rh_command1 = [1.2, 1.2,
+                   1.2, 1.2,
+                   1.2, 1.2,
+                   1.2, 1.2,
+                   1.2, 1.2]
+
+    rh_command2 = [0.8, 0.8,
+                   0.8, 0.8,
+                   0.8, 0.8,
+                   0.8, 0.8,
+                   0.8, 0.8]
+
     rl_commands = [rl_command1, rl_command2, rl_command3, rl_command4]
     rl_commands2 = [rl_command0_1, rl_command1]
-    rl_command_bezier2 = WxWebotsApi.line_fit(rl_commands2, timeline=500000)
-    rl_command_bezier = WxWebotsApi.line_fit(rl_commands, timeline=1500000)
-
+    rl_command_bezier2 = WxWebotsApi.line_fit(rl_commands2, timeline=600000)
+    rl_command_bezier = WxWebotsApi.line_fit(rl_commands, timeline=1000000)
     rl_is_over = False
     rl2_is_over = False
     rh1_is_over = False
@@ -80,7 +92,7 @@ def task10():
             time.sleep(12)
             if not rh1_is_over:
                 for i in range(1, 50000):
-                    rh_command = [0.0, 0.0,
+                    rh_command = [0.01, 0.01,
                                   0.4, 0.4,
                                   0.4, 0.4,
                                   0.4, 0.4,
@@ -110,7 +122,7 @@ def task10():
                     rh_controller(rh_names, rh_command, mode=5)
                 rh3_is_over = True
             elif not rl2_is_over:
-                rh_controller(rh_names, rh_command2, mode=7)
+                rh_controller(rh_names, rh_command_force, mode=7)
                 rl2_is_over = True
             elif not rh4_is_over:
                 # for cmd in rl_command_bezier2:
@@ -120,16 +132,22 @@ def task10():
                 rl_controller(rl_names, rl_command0, mode=7)
                 while (last - first) < 0.45:
                     last = rospy.get_time()
-                for _ in range(100000):
-                    rh_controller(rh_names, rh_command0, mode=5)
-                    rl_controller(rl_names, rl_command0_0, mode=5)
-                # if ws.walk_forward_step(step_num=1,linear_x=-0.01):
+                rl_controller(rl_names, rl_command0_0, mode=5)
+                time.sleep(1)
+                for i in range(1, 80000):
+                    rh_controller(rh_names, rh_command1, mode=5)
+                for i in range(1, 80000):
+                    rh_controller(rh_names, rh_command2, mode=5)
                 rh4_is_over = True
             elif not rh5_is_over:
                 for cmd in rl_command_bezier2:
                     rl_controller(rl_names, cmd, mode=5)
+                rh5_is_over = True
             else:
                 break
+
+
+
             # for i in range(1,300000):
             #     r_command[0] = -1.6
             #     rl_controller(r_names, r_command)
