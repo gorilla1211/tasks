@@ -12,18 +12,14 @@ def task10():
     WxContrApi = WxWebotsApi.WxWebotsControllers()
     rl_controller = WxContrApi.publish_rightLimb_controller
     rh_controller = WxContrApi.publish_rightHand_controller
-    lj_controller = WxContrApi.publish_rightHand_controller
-    # forward_finished = ws.walk_forward_step(1,-0.25)
     rl_names = ['RShoulderPitch', 'RShoulderRoll', 'RShoulderYaw',
                 'RElbowRoll', 'RElbowYaw',
                 'RWristPitch', 'RWristRoll']
-    rl_command = [0 for _ in range(7)]
 
     rh_names = ['LFirstFinger1', 'LFirstFinger2', 'LSecondFinger1', 'LSecondFinger2'
                                                                     'LThirdFinger1', 'LThirdFinger2', 'LForthFinger1',
                 'LForthFinger2',
                 'LFifthFinger1', 'LFifthFinger2']
-    rh_command = ['' for _ in range(10)]
 
     """
         所用关节范围对应表
@@ -46,9 +42,7 @@ def task10():
     rl_command2 = [-0.8, -0.2, 0, 0, 0, 0, 0]
     rl_command3 = [-1.2, -0.4, 0.1, 0, 0, 0, 0]
     rl_command4 = [-1.57, 0.1, 0.1, 0, 0.2, 0, 0]
-    rl_command5 = [-1.57, 0.2, 0.6, 0, -0.1, 0, 0]
-    # rl_command0 = [0,0,0,0,]
-    lj_commadn1 = []
+
     rh_command2 = [0, 0,
                    0.5, 0.5,
                    0.5, 0.5,
@@ -57,15 +51,16 @@ def task10():
     rl_command0 = [0, 10, 0, -10, 0, 0, 5]
     rl_command0_0 = [-0.8891579791007349, -1.0053011435310661, 0.6744789912475938, -1.3838224546750395,
                      -0.058873321286748104, -0.06892831649295111, 0.8230945483382753]
+
     rh_command0 = [0.0, 0.0,
                    0.4, 0.4,
                    0.4, 0.4,
                    0.4, 0.4,
                    0.4, 0.4]
     rl_commands = [rl_command1, rl_command2, rl_command3, rl_command4]
-    rl_commands2 = [rl_command5]
+
     rl_command_bezier = WxWebotsApi.line_fit(rl_commands, timeline=1500000)
-    rl_command_bezier2 = WxWebotsApi.line_fit(rl_commands2, timeline=300000)
+
     rl_is_over = False
     rl2_is_over = False
     rh1_is_over = False
