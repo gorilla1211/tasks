@@ -46,7 +46,7 @@ def task10():
 
     ll_command1 = [0, 0, 0, 0, 0, 0, 0]
     ll_command2 = [1.5, 0.3, 0, 0, 0, 0, 0]
-    ll_command3 = [1.5, 0.3, 0, -0.65, 0, 0, 0]
+    ll_command3 = [1.5, 0.3, 0, -0.7, 0, 0, 0]
     ll_command_force = [0, 0, 0, -5, 0, 0, 0]
 
     rl_command0 = [0, 10, 0, -10, 0, 0, 5]
@@ -156,16 +156,18 @@ def task10():
                     rl_controller(rl_names, cmd, mode=5)
                 rh5_is_over = True
             else:
+                for i in range(1, 10000):
+                    ll_controller(ll_names, ll_command1, mode=5)
                 break
     '''步态旋转'''
 
 
-    # ws.start()
-    # first = rospy.get_time()
-    # last = rospy.get_time()
-    # ws.vel(angular_z=0.3)
-    # while (last - first)<4.5:
-    #     ws.vel(angular_z=-0.2)
-    #     last = rospy.get_time()
-    # ws.stop()
+    ws.start()
+    first = rospy.get_time()
+    last = rospy.get_time()
+    ws.vel(angular_z=0.3)
+    while (last - first)<2.0:
+        ws.vel(angular_z=-0.2)
+        last = rospy.get_time()
+    ws.stop()
 
