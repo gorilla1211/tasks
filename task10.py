@@ -46,15 +46,22 @@ def task10():
     rl_command2 = [-0.8, -0.2, 0, 0, 0, 0, 0]
     rl_command3 = [-1.2, -0.4, 0.1, 0, 0, 0, 0]
     rl_command4 = [-1.57, 0.1, 0.1, 0, 0.2, 0, 0]
-    rl_command5 = [-1.57, 0.0, 0.6, 0, 0.7, 0.4, 0]
+    rl_command5 = [-1.57, 0.2, 0.6, 0, -0.1, 0, 0]
     # rl_command0 = [0,0,0,0,]
     lj_commadn1 = []
-    rh_command2 = [0.1, 0,
+    rh_command2 = [0, 0,
                    0.5, 0.5,
                    0.5, 0.5,
                    0.5, 0.5,
                    0.5, 0.5]
-    rl_command0 = [5, 5, 5, 5, 5, 5, 5]
+    rl_command0 = [0, 10, 0, -10, 0, 0, 5]
+    rl_command0_0 = [-0.8891579791007349, -1.0053011435310661, 0.6744789912475938, -1.3838224546750395,
+                     -0.058873321286748104, -0.06892831649295111, 0.8230945483382753]
+    rh_command0 = [0.0, 0.0,
+                   0.4, 0.4,
+                   0.4, 0.4,
+                   0.4, 0.4,
+                   0.4, 0.4]
     rl_commands = [rl_command1, rl_command2, rl_command3, rl_command4]
     rl_commands2 = [rl_command5]
     rl_command_bezier = WxWebotsApi.line_fit(rl_commands, timeline=1500000)
@@ -107,9 +114,19 @@ def task10():
             elif not rl2_is_over:
                 rh_controller(rh_names, rh_command2, mode=7)
                 rl2_is_over = True
-            # elif not rh4_is_over:
-            #     # if ws.walk_forward_step(step_num=3,linear_x=-0.2):
-            #     #     rh4_is_over = True
+            elif not rh4_is_over:
+                # for cmd in rl_command_bezier2:
+                #     rl_controller(rl_names, cmd, mode=5)
+                first = rospy.get_time()
+                last = rospy.get_time()
+                rl_controller(rl_names, rl_command0, mode=7)
+                while (last - first) < 0.45:
+                    last = rospy.get_time()
+                for _ in range(100000):
+                    rh_controller(rh_names, rh_command0, mode=5)
+                    rl_controller(rl_names, rl_command0_0, mode=5)
+                # if ws.walk_forward_step(step_num=1,linear_x=-0.01):
+                rh4_is_over = True
             else:
                 break
             # for i in range(1,300000):
